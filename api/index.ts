@@ -1,58 +1,45 @@
 import "reflect-metadata";
+import Container from "typedi";
+import Express from "express";
+import { ApolloServer } from "apollo-server-express";
+import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
+
+import { connect } from "mongoose";
+import { buildSchema } from "type-graphql";
+
+import { ObjectId } from "mongodb";
+import { ObjectIdScalar } from "./util/scalars";
+import { TypegooseMiddleware } from "./util/typegoose-middleware";
+import { ApolloComplexityPlugin } from "./util/ApolloComplexityPlugin";
+
+import { UserResolver } from "./resolvers/user";
 
 import env from "dotenv";
-import Container from "typedi";
 
 env.config();
 
 async function main() {
 	//Build schema
 	const schema = await buildSchema({
-		resolvers: [],
+		resolvers: [UserResolver],
 		// use document converting middleware
 		globalMiddlewares: [TypegooseMiddleware],
 		// use ObjectId scalar mapping
 		scalarsMap: [{ type: ObjectId, scalar: ObjectIdScalar }],
 		emitSchemaFile: true,
-		authChecker,
 		container: Container,
 		//disabled validation for dev purposes
 		//validate: false,
 	});
 
 	const app = Express();
-	const redisClient = createClient();
-	redisClient.on("error", console.error);
-	await redisClient.connect();
-
-	app.use(Express.static("public"));
-	app.use(cookieParser());
-	app.use(
-		cors({
-			origin: ["http://localhost:3000", "http://localhost:5001"],
-			credentials: true,
-		})
-	);
-	app.use(
-		(
-			req: Express.Request,
-			res: Express.Response,
-			next: Express.NextFunction
-		): void => {
-			if (req.originalUrl === "/webhook") {
-				next();
-			} else {
-				Express.json()(req, res, next);
-			}
-		}
-	);
-	app.use("/webhook", stripeWebhook);
+	app.use(Express.json());
 
 	//Create Apollo server
 	const server = new ApolloServer({
 		schema,
-		context: ({ req, res }) =>
-			createContext({ req, res, redisClient, user: null }),
+		// context: ({ req, res }) =>
+		// 	createContext({ req, res, redisClient, user: null }),
 		plugins: [
 			ApolloServerPluginLandingPageGraphQLPlayground,
 			new ApolloComplexityPlugin(1000),
