@@ -95,14 +95,14 @@ export class User extends TimeStamps {
 
 	@Field()
 	@Property()
-	name: string;
-
-	@Field()
-	@Property()
 	email: string;
 
 	@Property()
 	password: string;
+
+	@Field()
+	@Property()
+	name: string;
 
 	@Field(() => Int, { nullable: true })
 	@Property()

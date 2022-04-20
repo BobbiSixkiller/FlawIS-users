@@ -24,6 +24,11 @@ The javascript `Date` as string. Type represents date and time as the ISO Date s
 """
 scalar DateTime
 
+type Edge {
+  cursor: ObjectId!
+  node: User!
+}
+
 type Mutation {
   register: User!
 }
@@ -31,9 +36,16 @@ type Mutation {
 """Mongo object id scalar type"""
 scalar ObjectId
 
+type PageInfo {
+  endCursor: ObjectId!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: ObjectId!
+}
+
 type Query {
   user(id: ObjectId!): User!
-  users: [User!]!
+  users(after: String, before: String, first: Int = 20, last: Int = 20): UserConnection!
 }
 
 """The user model entity"""
@@ -47,4 +59,10 @@ type User {
   telephone: Int
   updatedAt: DateTime!
   verified: Boolean!
+}
+
+"""UserConnection type enabling cursor based pagination"""
+type UserConnection {
+  edges: [Edge!]!
+  pageInfo: PageInfo!
 }

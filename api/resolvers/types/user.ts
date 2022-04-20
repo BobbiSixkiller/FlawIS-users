@@ -1,7 +1,40 @@
-import { InputType, Field } from "type-graphql";
-import { Length, IsEmail, Matches } from "class-validator";
+import { InputType, Field, ObjectType, ArgsType, Int } from "type-graphql";
+import { Length, IsEmail, Matches, Min, Max } from "class-validator";
+import { ObjectId } from "mongodb";
 
-import { User } from "../../entities/User";
+import { User } from "../../entitites/User";
+import CreateConnection from "./pagination";
+import { RefDocExists } from "../../util/validation";
+
+@ObjectType({
+	description: "UserConnection type enabling cursor based pagination",
+})
+export class UserConnection extends CreateConnection(User) {}
+
+@ArgsType()
+export class UserArgs {
+	@Field(() => String, { nullable: true })
+	@RefDocExists(User, {
+		message: "Cursor's document not found!",
+	})
+	after?: ObjectId;
+
+	@Field(() => Int, { defaultValue: 20, nullable: true })
+	@Min(1)
+	@Max(50)
+	first?: number;
+
+	@Field(() => String, { nullable: true })
+	@RefDocExists(User, {
+		message: "Cursor's document not found!",
+	})
+	before?: ObjectId;
+
+	@Field(() => Int, { defaultValue: 20, nullable: true })
+	@Min(1)
+	@Max(50)
+	last?: number;
+}
 
 @InputType()
 export class PasswordInput implements Partial<User> {
