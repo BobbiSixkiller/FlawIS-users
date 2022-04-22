@@ -1,5 +1,12 @@
 import { InputType, Field, ObjectType, ArgsType, Int } from "type-graphql";
-import { Length, IsEmail, Matches, Min, Max } from "class-validator";
+import {
+	Length,
+	IsEmail,
+	Matches,
+	Min,
+	Max,
+	IsPhoneNumber,
+} from "class-validator";
 import { ObjectId } from "mongodb";
 
 import { User } from "../../entitites/User";
@@ -48,21 +55,41 @@ export class PasswordInput implements Partial<User> {
 @InputType({ description: "New user input data" })
 export class RegisterInput extends PasswordInput implements Partial<User> {
 	@Field()
-	@Length(1, 100, { message: "Name can be max 100 characters long!" })
+	@Length(1, 100, { message: "Name can must be 1-100 characters long!" })
 	name: string;
 
 	@Field()
 	@IsEmail()
 	email: string;
+
+	@Field()
+	@Length(1, 100, {
+		message: "Name of the organisation must be 1-200 characters long!",
+	})
+	organisation: string;
+
+	@Field()
+	@IsPhoneNumber()
+	telephone: string;
 }
 
 @InputType({ description: "User update input data" })
 export class UserInput implements Partial<User> {
 	@Field()
-	@Length(1, 100, { message: "Name can be max 100 characters long!" })
+	@Length(1, 100, { message: "Namemust be 1-100 characters long!" })
 	name: string;
 
 	@Field()
 	@IsEmail()
 	email: string;
+
+	@Field()
+	@Length(1, 100, {
+		message: "Name of the organisation must be 1-200 characters long!",
+	})
+	organisation: string;
+
+	@Field()
+	@IsPhoneNumber()
+	telephone: string;
 }

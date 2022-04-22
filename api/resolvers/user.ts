@@ -4,7 +4,7 @@ import { Service } from "typedi";
 import { User } from "../entitites/User";
 import { CRUDservice } from "../services/CRUDservice";
 import { Mutation } from "type-graphql";
-import { UserArgs, UserConnection } from "./types/user";
+import { RegisterInput, UserArgs, UserConnection } from "./types/user";
 import { transformIds } from "../util/typegoose-middleware";
 
 @Service()
@@ -48,27 +48,40 @@ export class UserResolver {
 		]);
 
 		return {
-			edges: users.map((product) => ({
-				cursor: product?._id,
-				node: transformIds(product),
+			edges: users.map((user) => ({
+				cursor: user?._id,
+				node: transformIds(user),
 			})),
 			pageInfo: {
 				startCursor: users[0]._id,
-				hasPreviousPage: (await this.userService.exists({
-					_id: { $gt: users[0]._id },
-				})) as boolean,
+				hasPreviousPage:
+					(await this.userService.exists({
+						_id: { $gt: users[0]._id },
+					})) !== null,
 				endCursor: users[users.length - 1]._id,
-				hasNextPage: (await this.userService.exists({
-					_id: { $lt: users[users.length - 1]._id },
-				})) as boolean,
+				hasNextPage:
+					(await this.userService.exists({
+						_id: { $lt: users[users.length - 1]._id },
+					})) !== null,
 			},
 		};
 	}
 
 	@Mutation(() => User)
-	async register() {}
+	async register(
+		@Arg("data")
+		{ email, name, organisation, password, telephone }: RegisterInput
+	) {
+		return await this.userService.create({
+			email,
+			password,
+			name,
+			organisation,
+			telephone,
+		});
+	}
 
-	async login() {}
+	async login(@Arg("email") email: string, @Arg("password") password: string) {}
 
 	async updateUser() {}
 

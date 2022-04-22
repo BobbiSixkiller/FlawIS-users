@@ -1,8 +1,8 @@
 import {
 	ArgumentValidationError,
+	Directive,
 	Field,
 	ID,
-	Int,
 	ObjectType,
 } from "type-graphql";
 import { ObjectId } from "mongodb";
@@ -16,7 +16,7 @@ import { TimeStamps } from "@typegoose/typegoose/lib/defaultClasses";
 import { hash } from "bcrypt";
 
 @ObjectType()
-class Address {
+export class Address {
 	@Field()
 	@Property()
 	street: string;
@@ -25,9 +25,9 @@ class Address {
 	@Property()
 	city: string;
 
-	@Field(() => Int)
+	@Field()
 	@Property()
-	postal: number;
+	postal: string;
 
 	@Field()
 	@Property()
@@ -35,22 +35,22 @@ class Address {
 }
 
 @ObjectType({ description: "User's billing information" })
-class Billing {
+export class Billing {
 	@Field()
 	@Property()
 	name: string;
 
-	@Field(() => Int)
+	@Field({ nullable: true })
 	@Property()
-	ICO: number;
+	ICO?: string;
 
-	@Field(() => Int)
+	@Field({ nullable: true })
 	@Property()
-	DIC: number;
+	DIC?: string;
 
-	@Field()
+	@Field({ nullable: true })
 	@Property()
-	ICDPH: string;
+	ICDPH?: string;
 
 	@Field(() => Address)
 	@Property()
@@ -80,14 +80,23 @@ class Billing {
 			]);
 		}
 	}
-})
-@Index(
-	{ createdAt: 1 },
-	{
-		expireAfterSeconds: 60 * 60 * 24,
-		partialFilterExpression: { verified: false },
+	if (this.isNew && this.isFlaw) {
+		this.billings.push({
+			name: "Univerzita Komenského v Bratislave, Právnická fakulta",
+			ICO: "00397865",
+			DIC: "2020845332",
+			ICDPH: "SK2020845332",
+			address: {
+				street: "Šafárikovo nám. 6",
+				city: "Bratislava",
+				postal: "81000",
+				country: "Slovensko",
+			},
+		});
 	}
-)
+})
+@Index({ name: "text" })
+@Directive('@key(fields: "id")')
 @ObjectType({ description: "The user model entity" })
 export class User extends TimeStamps {
 	@Field(() => ID)
@@ -104,9 +113,9 @@ export class User extends TimeStamps {
 	@Property()
 	name: string;
 
-	@Field(() => Int, { nullable: true })
+	@Field({ nullable: true })
 	@Property()
-	telephone?: number;
+	telephone?: string;
 
 	@Field()
 	@Property()
@@ -117,11 +126,15 @@ export class User extends TimeStamps {
 	billings: Billing[];
 
 	@Field()
-	@Property({ default: false })
-	verified: boolean;
-
-	@Field()
 	createdAt: Date;
 	@Field()
 	updatedAt: Date;
+
+	get isFlaw(): boolean {
+		return this.email.split("@")[1] === "flaw.uniba.sk";
+	}
+
+	get isUniba(): boolean {
+		return this.email.split("@")[1] === "uniba.sk";
+	}
 }

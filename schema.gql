@@ -3,18 +3,28 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+directive @extends on INTERFACE | OBJECT
+
+directive @external on FIELD_DEFINITION | OBJECT
+
+directive @key(fields: String!) on INTERFACE | OBJECT
+
+directive @provides(fields: String!) on FIELD_DEFINITION
+
+directive @requires(fields: String!) on FIELD_DEFINITION
+
 type Address {
   city: String!
   country: String!
-  postal: Int!
+  postal: String!
   street: String!
 }
 
 """User's billing information"""
 type Billing {
-  DIC: Int!
-  ICDPH: String!
-  ICO: Int!
+  DIC: String
+  ICDPH: String
+  ICO: String
   address: Address!
   name: String!
 }
@@ -30,7 +40,7 @@ type Edge {
 }
 
 type Mutation {
-  register: User!
+  register(data: RegisterInput!): User!
 }
 
 """Mongo object id scalar type"""
@@ -48,6 +58,15 @@ type Query {
   users(after: String, before: String, first: Int = 20, last: Int = 20): UserConnection!
 }
 
+"""New user input data"""
+input RegisterInput {
+  email: String!
+  name: String!
+  organisation: String!
+  password: String!
+  telephone: String!
+}
+
 """The user model entity"""
 type User {
   billings: [Billing!]!
@@ -56,9 +75,8 @@ type User {
   id: ID!
   name: String!
   organisation: String!
-  telephone: Int
+  telephone: String
   updatedAt: DateTime!
-  verified: Boolean!
 }
 
 """UserConnection type enabling cursor based pagination"""
