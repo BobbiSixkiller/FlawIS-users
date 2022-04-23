@@ -1,13 +1,13 @@
 import "reflect-metadata";
 import Container from "typedi";
 import { ApolloServer } from "apollo-server";
-import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
+//import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
 import { connect } from "mongoose";
 
 import { ObjectId } from "mongodb";
 import { ObjectIdScalar } from "./util/scalars";
 import { TypegooseMiddleware } from "./util/typegoose-middleware";
-import { ApolloComplexityPlugin } from "./util/ApolloComplexityPlugin";
+//import { ApolloComplexityPlugin } from "./util/ApolloComplexityPlugin";
 
 import { UserResolver } from "./resolvers/user";
 
@@ -16,6 +16,7 @@ import { resolveUserReference } from "./resolvers/resolveUserReference";
 import { buildFederatedSchema } from "./util/buildFederatedSchema";
 
 import env from "dotenv";
+import { Context } from "./util/auth";
 
 env.config();
 
@@ -42,12 +43,18 @@ async function main() {
 	//Create Apollo server
 	const server = new ApolloServer({
 		schema,
+		context: ({ req, res }) =>
+			({
+				req,
+				res,
+				user: req.headers.user ? JSON.parse(req.headers.user as string) : null,
+			} as Context),
 		// context: ({ req, res }) =>
 		// 	createContext({ req, res, redisClient, user: null }),
-		plugins: [
-			ApolloServerPluginLandingPageGraphQLPlayground,
-			new ApolloComplexityPlugin(1000),
-		],
+		// plugins: [
+		// 	ApolloServerPluginLandingPageGraphQLPlayground,
+		// 	new ApolloComplexityPlugin(1000),
+		// ],
 	});
 
 	// create mongoose connection

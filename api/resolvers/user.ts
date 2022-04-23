@@ -1,4 +1,4 @@
-import { Arg, Args, Query, Resolver } from "type-graphql";
+import { Arg, Args, Ctx, Query, Resolver } from "type-graphql";
 import { ObjectId } from "mongodb";
 import { Service } from "typedi";
 import { User } from "../entitites/User";
@@ -6,6 +6,10 @@ import { CRUDservice } from "../services/CRUDservice";
 import { Mutation } from "type-graphql";
 import { RegisterInput, UserArgs, UserConnection } from "./types/user";
 import { transformIds } from "../util/typegoose-middleware";
+import { AuthenticationError } from "apollo-server-core";
+
+import { Context } from "../util/auth";
+import { compare } from "bcrypt";
 
 @Service()
 @Resolver()
@@ -22,8 +26,10 @@ export class UserResolver {
 
 	@Query(() => UserConnection)
 	async users(
-		@Args() { first, after, last, before }: UserArgs
+		@Args() { first, after, last, before }: UserArgs,
+		@Ctx() { user }: Context
 	): Promise<UserConnection> {
+		console.log(user);
 		const users = await this.userService.aggregate([
 			//sort based on the latest user created
 			{ $sort: { _id: -1 } },
@@ -81,7 +87,29 @@ export class UserResolver {
 		});
 	}
 
-	async login(@Arg("email") email: string, @Arg("password") password: string) {}
+	@Mutation(() => User)
+	async login(
+		@Arg("email") email: string,
+		@Arg("password") password: string,
+		@Ctx() { res, req }: Context
+	): Promise<User> {
+		const user = await this.userService.findOne({ email });
+		if (!user) throw new AuthenticationError("Invalid credentials!");
+
+		const match = await compare(password, user.password);
+		if (!match) throw new AuthenticationError("Invalid credentials!");
+
+		res.cookie("accessToken", user.token, {
+			httpOnly: true,
+			maxAge: 60 * 60 * 1000 * 24 * 7,
+			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+			secure: process.env.NODE_ENV === "production",
+		});
+
+		console.log(res);
+
+		return user;
+	}
 
 	async updateUser() {}
 

@@ -40,6 +40,7 @@ type Edge {
 }
 
 type Mutation {
+  login(email: String!, password: String!): User!
   register(data: RegisterInput!): User!
 }
 
@@ -75,6 +76,8 @@ type User {
   id: ID!
   name: String!
   organisation: String!
+  permissions: [String!]!
+  role: String!
   telephone: String
   updatedAt: DateTime!
 }

@@ -14,6 +14,7 @@ import {
 } from "@typegoose/typegoose";
 import { TimeStamps } from "@typegoose/typegoose/lib/defaultClasses";
 import { hash } from "bcrypt";
+import { signJwt } from "../util/auth";
 
 @ObjectType()
 export class Address {
@@ -110,6 +111,14 @@ export class User extends TimeStamps {
 	password: string;
 
 	@Field()
+	@Property({ default: "BASIC", enum: ["BASIC", "SUPERVISOR", "ADMIN"] })
+	role: string;
+
+	@Field(() => [String])
+	@Property({ type: () => [String], default: ["read:own_account"] })
+	permissions: string[];
+
+	@Field()
 	@Property()
 	name: string;
 
@@ -129,6 +138,21 @@ export class User extends TimeStamps {
 	createdAt: Date;
 	@Field()
 	updatedAt: Date;
+
+	get token(): string {
+		return (
+			"Bearer " +
+			signJwt(
+				{
+					id: this.id,
+					email: this.email,
+					role: this.role,
+					permissions: this.permissions,
+				},
+				{ expiresIn: "1h" }
+			)
+		);
+	}
 
 	get isFlaw(): boolean {
 		return this.email.split("@")[1] === "flaw.uniba.sk";
