@@ -10,12 +10,14 @@ import { AuthenticationError } from "apollo-server-core";
 
 import { Context } from "../util/auth";
 import { compare } from "bcrypt";
+import { Authorized } from "type-graphql";
 
 @Service()
 @Resolver()
 export class UserResolver {
 	constructor(private readonly userService = new CRUDservice(User)) {}
 
+	@Authorized(["read:own_account"])
 	@Query(() => User)
 	async user(@Arg("id") id: ObjectId): Promise<User> {
 		const user = await this.userService.findOne({ _id: id });
@@ -24,12 +26,12 @@ export class UserResolver {
 		return user;
 	}
 
+	@Authorized("ADMIN", "SUPERVISOR")
 	@Query(() => UserConnection)
 	async users(
 		@Args() { first, after, last, before }: UserArgs,
 		@Ctx() { user }: Context
 	): Promise<UserConnection> {
-		console.log(user);
 		const users = await this.userService.aggregate([
 			//sort based on the latest user created
 			{ $sort: { _id: -1 } },
@@ -76,22 +78,32 @@ export class UserResolver {
 	@Mutation(() => User)
 	async register(
 		@Arg("data")
-		{ email, name, organisation, password, telephone }: RegisterInput
+		{ email, name, organisation, password, telephone }: RegisterInput,
+		@Ctx() { res }: Context
 	) {
-		return await this.userService.create({
+		const user = await this.userService.create({
 			email,
 			password,
 			name,
 			organisation,
 			telephone,
 		});
+
+		res.cookie("accessToken", user.token, {
+			httpOnly: true,
+			maxAge: 60 * 60 * 1000 * 24 * 7,
+			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+			secure: process.env.NODE_ENV === "production",
+		});
+
+		return user;
 	}
 
 	@Mutation(() => User)
 	async login(
 		@Arg("email") email: string,
 		@Arg("password") password: string,
-		@Ctx() { res, req }: Context
+		@Ctx() { res }: Context
 	): Promise<User> {
 		const user = await this.userService.findOne({ email });
 		if (!user) throw new AuthenticationError("Invalid credentials!");
@@ -106,9 +118,15 @@ export class UserResolver {
 			secure: process.env.NODE_ENV === "production",
 		});
 
-		console.log(res);
-
 		return user;
+	}
+
+	@Authorized()
+	@Mutation(() => Boolean)
+	logout(@Ctx() { res }: Context) {
+		res.clearCookie("accessToken");
+
+		return true;
 	}
 
 	async updateUser() {}

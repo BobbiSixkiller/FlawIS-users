@@ -1,10 +1,16 @@
 import { Request, Response } from "express";
 import { verify, sign, SignOptions } from "jsonwebtoken";
 
+import env from "dotenv";
+import { AuthChecker } from "type-graphql";
+import { User } from "../entitites/User";
+
+env.config();
+
 export interface Context {
 	req: Request;
 	res: Response;
-	user: Object | null;
+	user: User | null;
 }
 
 export function signJwt(object: Object, options?: SignOptions | undefined) {
@@ -38,3 +44,24 @@ export function createContext(ctx: Context): Context {
 
 	return context;
 }
+
+export const authChecker: AuthChecker<Context> = (
+	{ context: { user } },
+	roles
+) => {
+	//checks for user inside the context
+	if (roles.length === 0) {
+		return user !== null;
+	}
+	//roles exists but no user in the context
+	if (!user) return false;
+
+	if (roles.includes("ADMIN")) return user.role === "ADMIN";
+	if (roles.includes("SUPERVISOR")) return user.role === "SUPERVISOR";
+
+	//check if user permissions property contains some defined role
+	if (roles.some((role) => user.permissions.includes(role))) return true;
+
+	//no roles matched
+	return false;
+};

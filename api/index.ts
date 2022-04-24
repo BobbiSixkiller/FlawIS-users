@@ -17,6 +17,7 @@ import { buildFederatedSchema } from "./util/buildFederatedSchema";
 
 import env from "dotenv";
 import { Context } from "./util/auth";
+import { authChecker } from "./util/auth";
 
 env.config();
 
@@ -34,6 +35,7 @@ async function main() {
 			container: Container,
 			//disabled validation for dev purposes
 			//validate: false,
+			authChecker,
 		},
 		{
 			User: { __resolveReference: resolveUserReference },
@@ -43,18 +45,11 @@ async function main() {
 	//Create Apollo server
 	const server = new ApolloServer({
 		schema,
-		context: ({ req, res }) =>
-			({
-				req,
-				res,
-				user: req.headers.user ? JSON.parse(req.headers.user as string) : null,
-			} as Context),
-		// context: ({ req, res }) =>
-		// 	createContext({ req, res, redisClient, user: null }),
-		// plugins: [
-		// 	ApolloServerPluginLandingPageGraphQLPlayground,
-		// 	new ApolloComplexityPlugin(1000),
-		// ],
+		context: ({ req, res, user }: Context) => ({
+			req,
+			res,
+			user: req.headers.user ? JSON.parse(req.headers.user as string) : null,
+		}),
 	});
 
 	// create mongoose connection
