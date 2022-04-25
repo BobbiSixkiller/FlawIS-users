@@ -45,7 +45,7 @@ async function main() {
 	//Create Apollo server
 	const server = new ApolloServer({
 		schema,
-		context: ({ req, res, user }: Context) => ({
+		context: ({ req, res }: Context) => ({
 			req,
 			res,
 			user: req.headers.user ? JSON.parse(req.headers.user as string) : null,

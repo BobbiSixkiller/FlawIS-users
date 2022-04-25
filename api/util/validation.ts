@@ -34,37 +34,3 @@ export function RefDocExists(
 		});
 	};
 }
-
-@ValidatorConstraint({ name: "NameExists", async: true })
-class NameExistsValidator implements ValidatorConstraintInterface {
-	async validate(name: string, args: ValidationArguments) {
-		const modelClass = args.constraints[0];
-		const nameExists = await getModelForClass(modelClass).findOne({
-			name: name.toLowerCase(),
-		});
-
-		if (nameExists) {
-			return false;
-		} else return true;
-	}
-
-	defaultMessage(): string {
-		return "Document with provided name already exists!";
-	}
-}
-
-export function NameExists(
-	modelClass: any,
-	validationOptions?: ValidationOptions
-) {
-	return function (object: Object, propertyName: string) {
-		registerDecorator({
-			name: "NameExists",
-			target: object.constructor,
-			propertyName: propertyName,
-			constraints: [modelClass],
-			options: validationOptions,
-			validator: NameExistsValidator,
-		});
-	};
-}

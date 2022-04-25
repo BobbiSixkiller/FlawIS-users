@@ -40,9 +40,11 @@ type Edge {
 }
 
 type Mutation {
+  deleteUser(id: ObjectId!): Boolean!
   login(email: String!, password: String!): User!
   logout: Boolean!
   register(data: RegisterInput!): User!
+  updateUser(data: UserInput!, id: ObjectId!): User!
 }
 
 """Mongo object id scalar type"""
@@ -56,6 +58,7 @@ type PageInfo {
 }
 
 type Query {
+  me: User!
   user(id: ObjectId!): User!
   users(after: String, before: String, first: Int = 20, last: Int = 20): UserConnection!
 }
@@ -87,4 +90,12 @@ type User {
 type UserConnection {
   edges: [Edge!]!
   pageInfo: PageInfo!
+}
+
+"""User update input data"""
+input UserInput {
+  email: String!
+  name: String!
+  organisation: String!
+  telephone: String!
 }

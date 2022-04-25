@@ -4,9 +4,14 @@ import { Service } from "typedi";
 import { User } from "../entitites/User";
 import { CRUDservice } from "../services/CRUDservice";
 import { Mutation } from "type-graphql";
-import { RegisterInput, UserArgs, UserConnection } from "./types/user";
+import {
+	RegisterInput,
+	UserArgs,
+	UserConnection,
+	UserInput,
+} from "./types/user";
 import { transformIds } from "../util/typegoose-middleware";
-import { AuthenticationError } from "apollo-server-core";
+import { AuthenticationError, UserInputError } from "apollo-server-core";
 
 import { Context } from "../util/auth";
 import { compare } from "bcrypt";
@@ -17,7 +22,7 @@ import { Authorized } from "type-graphql";
 export class UserResolver {
 	constructor(private readonly userService = new CRUDservice(User)) {}
 
-	@Authorized(["read:own_account"])
+	@Authorized(["ADMIN", "SUPERVISOR", "IS_OWN_USER"])
 	@Query(() => User)
 	async user(@Arg("id") id: ObjectId): Promise<User> {
 		const user = await this.userService.findOne({ _id: id });
@@ -29,8 +34,7 @@ export class UserResolver {
 	@Authorized("ADMIN", "SUPERVISOR")
 	@Query(() => UserConnection)
 	async users(
-		@Args() { first, after, last, before }: UserArgs,
-		@Ctx() { user }: Context
+		@Args() { first, after, last, before }: UserArgs
 	): Promise<UserConnection> {
 		const users = await this.userService.aggregate([
 			//sort based on the latest user created
@@ -73,6 +77,16 @@ export class UserResolver {
 					})) !== null,
 			},
 		};
+	}
+
+	@Authorized()
+	@Query(() => User)
+	async me(@Ctx() { user }: Context): Promise<User> {
+		const loggedInUser = await this.userService.findOne({ _id: user?.id });
+		if (!loggedInUser)
+			throw new AuthenticationError("User account has been deleted!");
+
+		return loggedInUser;
 	}
 
 	@Mutation(() => User)
@@ -129,7 +143,27 @@ export class UserResolver {
 		return true;
 	}
 
-	async updateUser() {}
+	@Authorized(["ADMIN", "SUPERVISOR", "IS_OWN_USER"])
+	@Mutation(() => User)
+	async updateUser(
+		@Arg("id") id: ObjectId,
+		@Arg("data") { name, email, organisation, telephone }: UserInput
+	): Promise<User> {
+		const user = await this.userService.findOne({ _id: id });
+		if (!user) throw new UserInputError("User not found!");
 
-	async deleteUser() {}
+		user.name = name;
+		user.email = email;
+		user.organisation = organisation;
+		user.telephone = telephone;
+
+		return await user.save();
+	}
+
+	@Authorized(["ADMIN"])
+	@Mutation(() => Boolean)
+	async deleteUser(@Arg("id") id: ObjectId): Promise<boolean> {
+		const { deletedCount } = await this.userService.delete({ _id: id });
+		return deletedCount > 0;
+	}
 }

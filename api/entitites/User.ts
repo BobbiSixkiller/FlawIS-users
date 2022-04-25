@@ -1,5 +1,6 @@
 import {
 	ArgumentValidationError,
+	Authorized,
 	Directive,
 	Field,
 	ID,
@@ -110,10 +111,12 @@ export class User extends TimeStamps {
 	@Property()
 	password: string;
 
+	@Authorized(["ADMIN"])
 	@Field()
 	@Property({ default: "BASIC", enum: ["BASIC", "SUPERVISOR", "ADMIN"] })
 	role: string;
 
+	@Authorized(["ADMIN"])
 	@Field(() => [String])
 	@Property({
 		type: () => [String],
@@ -152,7 +155,7 @@ export class User extends TimeStamps {
 					role: this.role,
 					permissions: this.permissions,
 				},
-				{ expiresIn: "1h" }
+				{ expiresIn: "7d" }
 			)
 		);
 	}

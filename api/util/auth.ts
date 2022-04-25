@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { verify, sign, SignOptions } from "jsonwebtoken";
+import { ObjectId } from "mongodb";
 
 import env from "dotenv";
 import { AuthChecker } from "type-graphql";
@@ -46,7 +47,7 @@ export function createContext(ctx: Context): Context {
 }
 
 export const authChecker: AuthChecker<Context> = (
-	{ context: { user } },
+	{ args, context: { user } },
 	roles
 ) => {
 	//checks for user inside the context
@@ -56,11 +57,12 @@ export const authChecker: AuthChecker<Context> = (
 	//roles exists but no user in the context
 	if (!user) return false;
 
-	if (roles.includes("ADMIN")) return user.role === "ADMIN";
-	if (roles.includes("SUPERVISOR")) return user.role === "SUPERVISOR";
+	//check if user role matches the defined role
+	if (roles.some((role) => user.role === role)) return true;
 
 	//check if user permissions property contains some defined role
-	if (roles.some((role) => user.permissions.includes(role))) return true;
+	if (roles.some((role) => role === "IS_OWN_USER"))
+		return args.id.toString() === user.id;
 
 	//no roles matched
 	return false;
