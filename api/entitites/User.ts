@@ -120,7 +120,7 @@ export class User extends TimeStamps {
 	@Field(() => [String])
 	@Property({
 		type: () => [String],
-		default: ["read:own_account", "edit:own_account"],
+		default: [],
 	})
 	permissions: string[];
 

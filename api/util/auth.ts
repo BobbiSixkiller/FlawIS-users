@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { verify, sign, SignOptions } from "jsonwebtoken";
-import { ObjectId } from "mongodb";
 
 import env from "dotenv";
 import { AuthChecker } from "type-graphql";
@@ -32,6 +31,7 @@ export function verifyJwt<T>(token: string): T | null {
 
 export function createContext(ctx: Context): Context {
 	const context = ctx;
+	console.log(context);
 
 	if (context.req.cookies.accessToken) {
 		const token = context.req.cookies.accessToken.split("Bearer ")[1];
