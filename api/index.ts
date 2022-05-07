@@ -26,7 +26,6 @@ async function main() {
 	const schema = await buildFederatedSchema(
 		{
 			resolvers: [UserResolver],
-			orphanedTypes: [User],
 			// use document converting middleware
 			globalMiddlewares: [TypegooseMiddleware],
 			// use ObjectId scalar mapping
