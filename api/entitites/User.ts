@@ -82,7 +82,7 @@ export class Billing {
 			]);
 		}
 	}
-	if (this.isNew && this.isFlaw) {
+	if (this.isNew && (this.isFlaw || this.isUniba)) {
 		this.billings.push({
 			name: "Univerzita Komenského v Bratislave, Právnická fakulta",
 			ICO: "00397865",

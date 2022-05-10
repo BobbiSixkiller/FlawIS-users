@@ -5,6 +5,7 @@ import { User } from "../entitites/User";
 import { CRUDservice } from "../services/CRUDservice";
 import { Mutation } from "type-graphql";
 import {
+	BillingInput,
 	RegisterInput,
 	UserArgs,
 	UserConnection,
@@ -158,6 +159,30 @@ export class UserResolver {
 		user.telephone = telephone;
 
 		return await user.save();
+	}
+
+	@Authorized()
+	@Mutation(() => User)
+	async updateBilling(
+		@Ctx() { user }: Context,
+		@Arg("data") billingData: BillingInput
+	): Promise<User> {
+		const loggedInUser = await this.userService.findOne({ _id: user?.id });
+		if (!loggedInUser) throw new UserInputError("User not found!");
+
+		const billing = loggedInUser.billings.find(
+			(billing) => billing.name === billingData.name
+		);
+		if (billing) {
+			billing.address = billingData.address;
+			billing.DIC = billingData.DIC;
+			billing.ICO = billingData.ICO;
+			billing.ICDPH = billingData.ICDPH;
+		} else {
+			loggedInUser.billings.push(billingData);
+		}
+
+		return await loggedInUser.save();
 	}
 
 	@Authorized(["ADMIN"])

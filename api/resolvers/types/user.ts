@@ -9,7 +9,7 @@ import {
 } from "class-validator";
 import { ObjectId } from "mongodb";
 
-import { User } from "../../entitites/User";
+import { Address, Billing, User } from "../../entitites/User";
 import CreateConnection from "./pagination";
 import { RefDocExists } from "../../util/validation";
 
@@ -76,7 +76,7 @@ export class RegisterInput extends PasswordInput implements Partial<User> {
 @InputType({ description: "User update input data" })
 export class UserInput implements Partial<User> {
 	@Field()
-	@Length(1, 100, { message: "Namemust be 1-100 characters long!" })
+	@Length(1, 100, { message: "Name must be 1-100 characters long!" })
 	name: string;
 
 	@Field()
@@ -92,4 +92,42 @@ export class UserInput implements Partial<User> {
 	@Field()
 	@IsPhoneNumber()
 	telephone: string;
+}
+
+@InputType()
+class AddressInput implements Address {
+	@Field()
+	@Length(1, 100, { message: "Street must be 1-100 characters long!" })
+	street: string;
+
+	@Field()
+	@Length(1, 100, { message: "City must be 1-100 characters long!" })
+	city: string;
+
+	@Field()
+	@Length(1, 20, { message: "Postal code be 1-20 characters long!" })
+	postal: string;
+
+	@Field()
+	@Length(1, 50, { message: "Country name be 1-50 characters long!" })
+	country: string;
+}
+
+@InputType()
+export class BillingInput implements Billing {
+	@Field()
+	@Length(1, 100, { message: "Name must be 1-100 characters long!" })
+	name: string;
+
+	@Field(() => AddressInput)
+	address: AddressInput;
+
+	@Field({ nullable: true })
+	DIC?: string;
+
+	@Field({ nullable: true })
+	ICDPH?: string;
+
+	@Field({ nullable: true })
+	ICO?: string;
 }

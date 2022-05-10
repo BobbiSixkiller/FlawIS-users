@@ -20,12 +20,27 @@ type Address {
   street: String!
 }
 
+input AddressInput {
+  city: String!
+  country: String!
+  postal: String!
+  street: String!
+}
+
 """User's billing information"""
 type Billing {
   DIC: String
   ICDPH: String
   ICO: String
   address: Address!
+  name: String!
+}
+
+input BillingInput {
+  DIC: String
+  ICDPH: String
+  ICO: String
+  address: AddressInput!
   name: String!
 }
 
@@ -44,6 +59,7 @@ type Mutation {
   login(email: String!, password: String!): User!
   logout: Boolean!
   register(data: RegisterInput!): User!
+  updateBilling(data: BillingInput!): User!
   updateUser(data: UserInput!, id: ObjectId!): User!
 }
 
