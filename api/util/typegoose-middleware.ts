@@ -28,6 +28,10 @@ export function transformIds(doc: object) {
 			value = transformIds(value);
 		}
 
+		if (typeof value === "object" && Array.isArray(value)) {
+			value = value.map((v) => transformIds(v));
+		}
+
 		transformed.push([key, value]);
 	}
 
