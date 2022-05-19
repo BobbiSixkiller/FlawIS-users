@@ -114,7 +114,7 @@ class AddressInput implements Address {
 }
 
 @InputType()
-export class BillingInput implements Billing {
+export class BillingInput implements Partial<Billing> {
 	@Field()
 	@Length(1, 100, { message: "Name must be 1-100 characters long!" })
 	name: string;

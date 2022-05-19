@@ -1,6 +1,5 @@
 import {
 	ArgumentValidationError,
-	Authorized,
 	Directive,
 	Field,
 	ID,
@@ -38,6 +37,9 @@ export class Address {
 
 @ObjectType({ description: "User's billing information" })
 export class Billing {
+	@Field(() => ID, { nullable: true })
+	id?: ObjectId;
+
 	@Field()
 	@Property()
 	name: string;
@@ -53,6 +55,14 @@ export class Billing {
 	@Field({ nullable: true })
 	@Property()
 	ICDPH?: string;
+
+	@Field({ nullable: true })
+	@Property()
+	IBAN?: string;
+
+	@Field({ nullable: true })
+	@Property()
+	SWIFT?: string;
 
 	@Field(() => Address)
 	@Property()
@@ -111,12 +121,10 @@ export class User extends TimeStamps {
 	@Property()
 	password: string;
 
-	@Authorized(["ADMIN"])
 	@Field()
 	@Property({ default: "BASIC", enum: ["BASIC", "SUPERVISOR", "ADMIN"] })
 	role: string;
 
-	@Authorized(["ADMIN"])
 	@Field(() => [String])
 	@Property({
 		type: () => [String],
