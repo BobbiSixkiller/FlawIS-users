@@ -2,7 +2,6 @@ import {
 	ArgumentValidationError,
 	Directive,
 	Field,
-	ID,
 	ObjectType,
 } from "type-graphql";
 import { ObjectId } from "mongodb";
@@ -37,7 +36,7 @@ export class Address {
 
 @ObjectType({ description: "User's billing information" })
 export class Billing {
-	@Field(() => ID, { nullable: true })
+	@Field({ nullable: true })
 	id?: ObjectId;
 
 	@Field()
@@ -111,7 +110,7 @@ export class Billing {
 @Directive('@key(fields: "id")')
 @ObjectType({ description: "The user model entity" })
 export class User extends TimeStamps {
-	@Field(() => ID)
+	@Field()
 	id: ObjectId;
 
 	@Field()
@@ -160,6 +159,7 @@ export class User extends TimeStamps {
 				{
 					id: this.id,
 					email: this.email,
+					name: this.name,
 					role: this.role,
 					permissions: this.permissions,
 				},

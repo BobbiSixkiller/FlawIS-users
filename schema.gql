@@ -35,7 +35,7 @@ type Billing {
   ICO: String
   SWIFT: String
   address: Address!
-  id: ID
+  id: ObjectId
   name: String!
 }
 
@@ -96,7 +96,7 @@ type User {
   billings: [Billing!]!
   createdAt: DateTime!
   email: String!
-  id: ID!
+  id: ObjectId!
   name: String!
   organisation: String!
   permissions: [String!]!
