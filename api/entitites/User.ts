@@ -101,7 +101,7 @@ export class Billing {
 @Directive('@key(fields: "id")')
 @ObjectType({ description: "The user model entity" })
 export class User extends TimeStamps {
-	@Field(() => ID)
+	@Field()
 	id: ObjectId;
 
 	@Field()

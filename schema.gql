@@ -93,7 +93,7 @@ type User {
   billings: [Billing!]!
   createdAt: DateTime!
   email: String!
-  id: ID!
+  id: ObjectId!
   name: String!
   organisation: String!
   permissions: [String!]!
