@@ -92,17 +92,10 @@ export class UserResolver {
 
 	@Mutation(() => User)
 	async register(
-		@Arg("data")
-		{ email, name, organisation, password, telephone }: RegisterInput,
+		@Arg("data") registerInput: RegisterInput,
 		@Ctx() { res }: Context
 	) {
-		const user = await this.userService.create({
-			email,
-			password,
-			name,
-			organisation,
-			telephone,
-		});
+		const user = await this.userService.create(registerInput);
 
 		res.cookie("accessToken", user.token, {
 			httpOnly: true,
@@ -148,19 +141,19 @@ export class UserResolver {
 	@Mutation(() => User)
 	async updateUser(
 		@Arg("id") id: ObjectId,
-		@Arg("data") { name, email, organisation, telephone }: UserInput
+		@Arg("data") userInput: UserInput
 	): Promise<User> {
 		const user = await this.userService.findOne({ _id: id });
 		if (!user) throw new UserInputError("User not found!");
 
-		user.name = name;
-		user.email = email;
-		user.organisation = organisation;
-		user.telephone = telephone;
+		for (const [key, value] of Object.entries(userInput)) {
+			user[key as keyof UserInput] = value;
+		}
 
 		return await user.save();
 	}
 
+	//Mutation used to save newly added billing while registering for a conference
 	@Authorized()
 	@Mutation(() => User)
 	async updateBilling(
