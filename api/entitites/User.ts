@@ -43,17 +43,21 @@ export class Billing {
 	@Property()
 	name: string;
 
-	@Field({ nullable: true })
+	@Field(() => Address)
 	@Property()
-	ICO?: string;
+	address: Address;
 
-	@Field({ nullable: true })
+	@Field()
 	@Property()
-	DIC?: string;
+	ICO: string;
 
-	@Field({ nullable: true })
+	@Field()
 	@Property()
-	ICDPH?: string;
+	DIC: string;
+
+	@Field()
+	@Property()
+	ICDPH: string;
 
 	@Field({ nullable: true })
 	@Property()
@@ -62,10 +66,6 @@ export class Billing {
 	@Field({ nullable: true })
 	@Property()
 	SWIFT?: string;
-
-	@Field(() => Address)
-	@Property()
-	address: Address;
 }
 
 @pre<User>("save", async function () {

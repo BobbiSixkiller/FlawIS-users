@@ -122,12 +122,18 @@ export class BillingInput implements Partial<Billing> {
 	@Field(() => AddressInput)
 	address: AddressInput;
 
-	@Field({ nullable: true })
-	DIC?: string;
+	@Field()
+	DIC: string;
+
+	@Field()
+	ICDPH: string;
+
+	@Field()
+	ICO: string;
 
 	@Field({ nullable: true })
-	ICDPH?: string;
+	IBAN?: string;
 
 	@Field({ nullable: true })
-	ICO?: string;
+	SWIFT?: string;
 }

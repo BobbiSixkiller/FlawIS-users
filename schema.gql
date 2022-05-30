@@ -29,10 +29,10 @@ input AddressInput {
 
 """User's billing information"""
 type Billing {
-  DIC: String
+  DIC: String!
   IBAN: String
-  ICDPH: String
-  ICO: String
+  ICDPH: String!
+  ICO: String!
   SWIFT: String
   address: Address!
   id: ObjectId
@@ -40,9 +40,11 @@ type Billing {
 }
 
 input BillingInput {
-  DIC: String
-  ICDPH: String
-  ICO: String
+  DIC: String!
+  IBAN: String
+  ICDPH: String!
+  ICO: String!
+  SWIFT: String
   address: AddressInput!
   name: String!
 }

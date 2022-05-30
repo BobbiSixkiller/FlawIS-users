@@ -28,7 +28,11 @@ export function transformIds(doc: object) {
 			value = transformIds(value);
 		}
 
-		if (typeof value === "object" && Array.isArray(value)) {
+		if (
+			typeof value === "object" &&
+			Array.isArray(value) &&
+			!value.every((i) => typeof i === "string")
+		) {
 			value = value.map((v) => transformIds(v));
 		}
 
