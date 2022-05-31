@@ -63,6 +63,7 @@ type Mutation {
   deleteUser(id: ObjectId!): Boolean!
   login(email: String!, password: String!): User!
   logout: Boolean!
+  passwordReset(data: PasswordInput!): User!
   register(data: RegisterInput!): User!
   updateBilling(data: BillingInput!): User!
   updateUser(data: UserInput!, id: ObjectId!): User!
@@ -78,7 +79,12 @@ type PageInfo {
   startCursor: ObjectId!
 }
 
+input PasswordInput {
+  password: String!
+}
+
 type Query {
+  forgotPassword(email: String!): String!
   me: User!
   user(id: ObjectId!): User!
   users(after: String, before: String, first: Int = 20, last: Int = 20): UserConnection!

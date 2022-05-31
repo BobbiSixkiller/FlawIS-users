@@ -5,7 +5,8 @@ export async function sendMail(
 	to: string | string[],
 	subject: string,
 	text: string,
-	html: string
+	html: string,
+	attachments: Object[]
 ) {
 	// create reusable transporter object using the default SMTP transport
 	let transporter = nodemailer.createTransport({
@@ -24,6 +25,7 @@ export async function sendMail(
 		subject, // Subject line
 		text, // plain text body
 		html, // html body
+		attachments,
 	});
 
 	console.log("Message sent: %s", info.messageId);

@@ -3,7 +3,7 @@ import { verify, sign, SignOptions } from "jsonwebtoken";
 
 import env from "dotenv";
 import { AuthChecker } from "type-graphql";
-import { User } from "../entitites/User";
+import { User } from "./types";
 
 env.config();
 
@@ -11,6 +11,7 @@ export interface Context {
 	req: Request;
 	res: Response;
 	user: User | null;
+	locale: string;
 }
 
 export function signJwt(object: Object, options?: SignOptions | undefined) {
@@ -31,7 +32,6 @@ export function verifyJwt<T>(token: string): T | null {
 
 export function createContext(ctx: Context): Context {
 	const context = ctx;
-	console.log(context);
 
 	if (context.req.cookies.accessToken) {
 		const token = context.req.cookies.accessToken.split("Bearer ")[1];

@@ -1,17 +1,14 @@
 import "reflect-metadata";
 import Container from "typedi";
 import { ApolloServer } from "apollo-server";
-//import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
 import { connect } from "mongoose";
 
 import { ObjectId } from "mongodb";
 import { ObjectIdScalar } from "./util/scalars";
 import { TypegooseMiddleware } from "./util/typegoose-middleware";
-//import { ApolloComplexityPlugin } from "./util/ApolloComplexityPlugin";
 
 import { UserResolver } from "./resolvers/user";
 
-import { User } from "./entitites/User";
 import { resolveUserReference } from "./resolvers/resolveUserReference";
 import { buildFederatedSchema } from "./util/buildFederatedSchema";
 

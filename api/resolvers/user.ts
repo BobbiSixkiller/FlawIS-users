@@ -6,6 +6,7 @@ import { CRUDservice } from "../services/CRUDservice";
 import { Mutation } from "type-graphql";
 import {
 	BillingInput,
+	PasswordInput,
 	RegisterInput,
 	UserArgs,
 	UserConnection,
@@ -14,9 +15,11 @@ import {
 import { transformIds } from "../util/typegoose-middleware";
 import { AuthenticationError, UserInputError } from "apollo-server-core";
 
-import { Context } from "../util/auth";
+import { Context, signJwt, verifyJwt } from "../util/auth";
 import { compare } from "bcrypt";
 import { Authorized } from "type-graphql";
+import { sendMail } from "../util/mail";
+import { ResetToken } from "../util/types";
 
 @Service()
 @Resolver()
@@ -135,6 +138,43 @@ export class UserResolver {
 		res.clearCookie("accessToken");
 
 		return true;
+	}
+
+	@Query(() => String)
+	async forgotPassword(@Arg("email") email: string): Promise<string> {
+		const user = await this.userService.findOne({ email });
+		if (!user)
+			throw new UserInputError("No user with provided email address found!");
+
+		const token = signJwt({ id: user.id }, { expiresIn: "1h" });
+
+		sendMail(
+			email,
+			"Password Reset",
+			`Reset password with the following token: ${token}`,
+			`<html><head></head><body><p>Dear ${user.name}</p><p>Please reset your password with the following token: ${token}</p></body></html>`,
+			[]
+		);
+
+		return "Password reset link has been sent to your email!";
+	}
+
+	@Mutation(() => User)
+	async passwordReset(
+		@Arg("data") { password }: PasswordInput,
+		@Ctx() { req }: Context
+	): Promise<User> {
+		const token = req.headers.passwordToken;
+		console.log(token, req.headers);
+		const userId: ResetToken = verifyJwt(token as string);
+		if (!userId) throw new Error("Reset token expired!");
+
+		const user = await this.userService.findOne({ _id: userId.id });
+		if (!user) throw new Error("User not found!");
+
+		user.password = password;
+
+		return await user.save();
 	}
 
 	@Authorized(["ADMIN", "SUPERVISOR", "IS_OWN_USER"])
