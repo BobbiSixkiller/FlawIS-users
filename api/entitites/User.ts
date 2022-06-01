@@ -14,6 +14,7 @@ import {
 import { TimeStamps } from "@typegoose/typegoose/lib/defaultClasses";
 import { hash } from "bcrypt";
 import { signJwt } from "../util/auth";
+import CreateConnection from "../resolvers/types/pagination";
 
 @ObjectType()
 export class Address {
@@ -176,3 +177,8 @@ export class User extends TimeStamps {
 		return this.email.split("@")[1] === "uniba.sk";
 	}
 }
+
+@ObjectType({
+	description: "UserConnection type enabling cursor based pagination",
+})
+export class UserConnection extends CreateConnection(User) {}

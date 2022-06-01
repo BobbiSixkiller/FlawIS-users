@@ -1,4 +1,4 @@
-import { InputType, Field, ObjectType, ArgsType, Int } from "type-graphql";
+import { InputType, Field, ArgsType, Int } from "type-graphql";
 import {
 	Length,
 	IsEmail,
@@ -10,13 +10,7 @@ import {
 import { ObjectId } from "mongodb";
 
 import { Address, Billing, User } from "../../entitites/User";
-import CreateConnection from "./pagination";
 import { RefDocExists } from "../../util/validation";
-
-@ObjectType({
-	description: "UserConnection type enabling cursor based pagination",
-})
-export class UserConnection extends CreateConnection(User) {}
 
 @ArgsType()
 export class UserArgs {

@@ -4,7 +4,7 @@ import { ClassType, Field, ObjectType } from "type-graphql";
 //generic function for creating corresponding Connection Type enabling relay style pagination
 export default function CreateConnection<TNode>(TNodeClass: ClassType<TNode>) {
 	// `isAbstract` decorator option is mandatory to prevent registering in schema
-	@ObjectType({ isAbstract: true })
+	@ObjectType(`${TNodeClass.name}Edge`)
 	abstract class Edge {
 		@Field(() => TNodeClass) // here we use the runtime argument
 		node: TNode; // and here the generic type

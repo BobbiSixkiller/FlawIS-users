@@ -1,7 +1,7 @@
 import { Arg, Args, Ctx, Query, Resolver } from "type-graphql";
 import { ObjectId } from "mongodb";
 import { Service } from "typedi";
-import { User } from "../entitites/User";
+import { User, UserConnection } from "../entitites/User";
 import { CRUDservice } from "../services/CRUDservice";
 import { Mutation } from "type-graphql";
 import {
@@ -9,7 +9,6 @@ import {
 	PasswordInput,
 	RegisterInput,
 	UserArgs,
-	UserConnection,
 	UserInput,
 } from "./types/user";
 import { transformIds } from "../util/typegoose-middleware";
@@ -164,8 +163,7 @@ export class UserResolver {
 		@Arg("data") { password }: PasswordInput,
 		@Ctx() { req }: Context
 	): Promise<User> {
-		const token = req.headers.passwordToken;
-		console.log(token, req.headers);
+		const token = req.headers.resettoken;
 		const userId: ResetToken = verifyJwt(token as string);
 		if (!userId) throw new Error("Reset token expired!");
 

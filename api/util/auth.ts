@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { verify, sign, SignOptions } from "jsonwebtoken";
 
-import env from "dotenv";
 import { AuthChecker } from "type-graphql";
 import { User } from "./types";
+
+import env from "dotenv";
 
 env.config();
 

@@ -3,16 +3,6 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
-directive @extends on INTERFACE | OBJECT
-
-directive @external on FIELD_DEFINITION | OBJECT
-
-directive @key(fields: String!) on INTERFACE | OBJECT
-
-directive @provides(fields: String!) on FIELD_DEFINITION
-
-directive @requires(fields: String!) on FIELD_DEFINITION
-
 type Address {
   city: String!
   country: String!
@@ -53,11 +43,6 @@ input BillingInput {
 The javascript `Date` as string. Type represents date and time as the ISO Date string.
 """
 scalar DateTime
-
-type Edge {
-  cursor: ObjectId!
-  node: User!
-}
 
 type Mutation {
   deleteUser(id: ObjectId!): Boolean!
@@ -115,8 +100,13 @@ type User {
 
 """UserConnection type enabling cursor based pagination"""
 type UserConnection {
-  edges: [Edge!]!
+  edges: [UserEdge!]!
   pageInfo: PageInfo!
+}
+
+type UserEdge {
+  cursor: ObjectId!
+  node: User!
 }
 
 """User update input data"""
