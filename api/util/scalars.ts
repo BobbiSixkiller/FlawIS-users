@@ -5,7 +5,6 @@ export const ObjectIdScalar = new GraphQLScalarType({
 	name: "ObjectId",
 	description: "Mongo object id scalar type",
 	serialize(value: unknown): string {
-		console.log(value);
 		// check the type of received value
 		if (value instanceof ObjectId) return value.toHexString();
 

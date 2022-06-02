@@ -12,9 +12,10 @@ import { UserResolver } from "./resolvers/user";
 import { resolveUserReference } from "./resolvers/resolveUserReference";
 import { buildFederatedSchema } from "./util/buildFederatedSchema";
 
-import env from "dotenv";
 import { Context } from "./util/auth";
 import { authChecker } from "./util/auth";
+
+import env from "dotenv";
 
 env.config();
 

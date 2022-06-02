@@ -40,8 +40,6 @@ export class UserResolver {
 		@Args() { first, after, last, before }: UserArgs
 	): Promise<UserConnection> {
 		const users = await this.userService.aggregate([
-			//sort based on the latest user created
-			{ $sort: { _id: -1 } },
 			{
 				$match: {
 					$expr: {
@@ -59,6 +57,8 @@ export class UserResolver {
 					},
 				},
 			},
+			//sort based on the latest user created
+			{ $sort: { _id: -1 } },
 			{ $limit: last || first || 20 },
 		]);
 
@@ -101,7 +101,7 @@ export class UserResolver {
 
 		res.cookie("accessToken", user.token, {
 			httpOnly: true,
-			maxAge: 60 * 60 * 1000 * 24 * 7,
+			expires: new Date(Date.now() + 60 * 60 * 1000 * 24 * 7),
 			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
 			secure: process.env.NODE_ENV === "production",
 		});
@@ -123,7 +123,7 @@ export class UserResolver {
 
 		res.cookie("accessToken", user.token, {
 			httpOnly: true,
-			maxAge: 60 * 60 * 1000 * 24 * 7,
+			expires: new Date(Date.now() + 60 * 60 * 1000 * 24 * 7),
 			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
 			secure: process.env.NODE_ENV === "production",
 		});

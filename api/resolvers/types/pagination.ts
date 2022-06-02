@@ -30,7 +30,7 @@ export default function CreateConnection<TNode>(TNodeClass: ClassType<TNode>) {
 
 	@ObjectType({ isAbstract: true })
 	abstract class Connection {
-		@Field(() => [Edge])
+		@Field(() => [Edge], { nullable: "items" })
 		edges: Edge[];
 
 		@Field(() => PageInfo)
