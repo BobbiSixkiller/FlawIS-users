@@ -20,50 +20,50 @@ import env from "dotenv";
 env.config();
 
 async function main() {
-	//Build schema
-	const schema = await buildFederatedSchema(
-		{
-			resolvers: [UserResolver],
-			// use document converting middleware
-			globalMiddlewares: [TypegooseMiddleware],
-			// use ObjectId scalar mapping
-			scalarsMap: [{ type: ObjectId, scalar: ObjectIdScalar }],
-			emitSchemaFile: true,
-			container: Container,
-			//disabled validation for dev purposes
-			//validate: false,
-			authChecker,
-		},
-		{
-			User: { __resolveReference: resolveUserReference },
-		}
-	);
+  //Build schema
+  const schema = await buildFederatedSchema(
+    {
+      resolvers: [UserResolver],
+      // use document converting middleware
+      globalMiddlewares: [TypegooseMiddleware],
+      // use ObjectId scalar mapping
+      scalarsMap: [{ type: ObjectId, scalar: ObjectIdScalar }],
+      emitSchemaFile: true,
+      container: Container,
+      //disabled validation for dev purposes
+      //validate: false,
+      authChecker,
+    },
+    {
+      User: { __resolveReference: resolveUserReference },
+    }
+  );
 
-	//Create Apollo server
-	const server = new ApolloServer({
-		schema,
-		context: ({ req, res }: Context) => ({
-			req,
-			res,
-			user: req.headers.user ? JSON.parse(req.headers.user as string) : null,
-		}),
-	});
+  //Create Apollo server
+  const server = new ApolloServer({
+    schema,
+    context: ({ req, res }: Context) => ({
+      req,
+      res,
+      user: req.headers.user ? JSON.parse(req.headers.user as string) : null,
+    }),
+  });
 
-	// create mongoose connection
-	const mongoose = await connect(
-		process.env.DB_DEV_ATLAS || "mongodb://localhost:27017/test"
-	);
-	console.log(mongoose.connection && "Database connected!");
+  // create mongoose connection
+  const mongoose = await connect(
+    process.env.DB_DEV_ATLAS || "mongodb://localhost:27017/users"
+  );
+  console.log(mongoose.connection && "Database connected!");
 
-	await server.listen({ port: process.env.PORT || 5001 }, () =>
-		console.log(
-			`🚀 Server ready and listening at ==> http://localhost:${
-				process.env.PORT || 5001
-			}${server.graphqlPath}`
-		)
-	);
+  await server.listen({ port: process.env.PORT || 5001 }, () =>
+    console.log(
+      `🚀 Server ready and listening at ==> http://localhost:${
+        process.env.PORT || 5001
+      }${server.graphqlPath}`
+    )
+  );
 }
 
 main().catch((error) => {
-	console.log(error, "error");
+  console.log(error, "error");
 });
