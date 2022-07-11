@@ -94,16 +94,22 @@ input RegisterInput {
   telephone: String!
 }
 
+"""User role inside the FLAWIS system"""
+enum Role {
+  Admin
+  Basic
+}
+
 """The user model entity"""
 type User {
+  active: Boolean!
   billings: [Billing!]!
   createdAt: DateTime!
   email: String!
   id: ObjectId!
   name: String!
   organisation: String!
-  permissions: [String!]!
-  role: String!
+  role: Role!
   telephone: String
   updatedAt: DateTime!
 }

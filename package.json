@@ -1,53 +1,53 @@
 {
-	"name": "flawis-users",
-	"version": "1.0.0",
-	"description": "Microservice handling users of FlawIS implemented as a GraphhQL API with mongoDB as data layer.",
-	"main": "index.js",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"build": "tsc",
-		"serve": "node dist/server.js",
-		"dev": "nodemon --config nodemon.json api/index.ts"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/BobbiSixkiller/FlawIS-users.git"
-	},
-	"keywords": [
-		"GraphQL"
-	],
-	"author": "Matúš Muránsky",
-	"license": "ISC",
-	"bugs": {
-		"url": "https://github.com/BobbiSixkiller/FlawIS-users/issues"
-	},
-	"homepage": "https://github.com/BobbiSixkiller/FlawIS-users#readme",
-	"dependencies": {
-		"@apollo/federation": "^0.25.1",
-		"@typegoose/typegoose": "^9.7.1",
-		"apollo-graphql": "^0.9.7",
-		"apollo-server": "^3.7.0",
-		"bcrypt": "^5.0.1",
-		"class-validator": "^0.13.2",
-		"dotenv": "^16.0.0",
-		"express": "^4.17.3",
-		"graphql": "^15.8.0",
-		"graphql-query-complexity": "^0.11.0",
-		"graphql-tag": "^2.12.6",
-		"jsonwebtoken": "^8.5.1",
-		"mongoose": "^6.2.10",
-		"nodemailer": "^6.7.3",
-		"reflect-metadata": "^0.1.13",
-		"type-graphql": "^1.1.1",
-		"typedi": "^0.10.0"
-	},
-	"devDependencies": {
-		"@types/bcrypt": "^5.0.0",
-		"@types/express": "^4.17.13",
-		"@types/jsonwebtoken": "^8.5.8",
-		"@types/nodemailer": "^6.4.4",
-		"nodemon": "^2.0.15",
-		"ts-node": "^10.7.0",
-		"typescript": "^4.6.3"
-	}
+  "name": "flawis-users",
+  "version": "1.0.0",
+  "description": "Microservice handling users of FlawIS implemented as a GraphhQL API with mongoDB as data layer.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "serve": "node dist/server.js",
+    "dev": "nodemon --config nodemon.json api/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BobbiSixkiller/FlawIS-users.git"
+  },
+  "keywords": [
+    "GraphQL"
+  ],
+  "author": "Matúš Muránsky",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BobbiSixkiller/FlawIS-users/issues"
+  },
+  "homepage": "https://github.com/BobbiSixkiller/FlawIS-users#readme",
+  "dependencies": {
+    "@apollo/federation": "^0.25.1",
+    "@typegoose/typegoose": "^9.7.1",
+    "apollo-graphql": "^0.9.7",
+    "apollo-server": "^3.7.0",
+    "bcrypt": "^5.0.1",
+    "class-validator": "^0.13.2",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "graphql": "^15.8.0",
+    "graphql-query-complexity": "^0.11.0",
+    "graphql-tag": "^2.12.6",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.2.10",
+    "nodemailer": "^6.7.3",
+    "reflect-metadata": "^0.1.13",
+    "type-graphql": "^1.1.1",
+    "typedi": "^0.10.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/express": "^4.17.13",
+    "@types/jsonwebtoken": "^8.5.8",
+    "@types/nodemailer": "^6.4.4",
+    "nodemon": "^2.0.15",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.3"
+  }
 }
