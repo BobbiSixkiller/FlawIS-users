@@ -97,7 +97,6 @@ export class UserResolver {
     @Arg("data") registerInput: RegisterInput,
     @Ctx() { res }: Context
   ) {
-    console.log(registerInput);
     const user = await this.userService.create(registerInput);
 
     res.cookie("accessToken", user.token, {
