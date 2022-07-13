@@ -130,5 +130,6 @@ input UserInput {
   email: String!
   name: String!
   organisation: String!
+  role: String
   telephone: String!
 }

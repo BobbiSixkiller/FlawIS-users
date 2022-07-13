@@ -17,7 +17,7 @@ import { hash } from "bcrypt";
 import { signJwt } from "../util/auth";
 import CreateConnection from "../resolvers/types/pagination";
 
-enum Role {
+export enum Role {
   Basic = "BASIC",
   Admin = "ADMIN",
 }
