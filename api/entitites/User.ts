@@ -126,7 +126,7 @@ export class User extends TimeStamps {
   id: ObjectId;
 
   @Field()
-  @Property()
+  @Property({ unique: true })
   email: string;
 
   @Property()
